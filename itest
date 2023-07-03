@@ -1,0 +1,250 @@
+# -*- coding:utf-8 -*-
+import time
+import os
+import unittest
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import HtmlTestRunner
+from selenium.webdriver.common.action_chains import ActionChains
+import datetime
+import HwTestReport
+
+
+# from utils.config import config,DRIVER_PATH
+def Password():
+    directory = "/home/6296001855@zte.intra/python/iTestWebTest/iTestWebT
+    b = b + 1
+    est02 / iTestScript / password.txt
+    "
+
+
+fb = open(directory)
+password = fb.read()
+return password
+
+
+def CaseName():
+    today = datetime.date.today()
+    formatted_today = today.strftime('%y%m%d')
+    CaseName = "最小用例集" + str(formatted_today)
+    return CaseName
+
+
+def ScriptName(n):
+    ScriptName = ["1.4.1_AMF_用户初始注册，身份标识为SUCI", "1.4.2_AMF_初始注册，身份标识为5G-GUTI，注册的AMF不变",
+                  "1.4.4_AMF_UE发起的去注册 （Switch Off）删除", "1.6.1_AMF_CM-IDLE态终端发起的业务请求",
+                  "2.1_AMF_注册流程"]
+    return ScriptName[n]
+
+
+def GetScript(n):
+    directory = "/home/6296001855@zte.intra/python/iTestWebTest/iTestWebTest02/iTestScript/script0" + str(n) + ".txt"
+    fb = open(directory)
+    script = fb.read()
+    return script
+
+
+class iTestTest(unittest.TestCase):
+    dirver = 1
+
+    @classmethod
+    def setUpClass(cls):
+        cls.driver = webdriver.Chrome()
+        cls.driver.implicitly_wait(30)
+        cls.driver.get("http://10.237.255.81")
+        # driver.get("https://itest.zte.com.cn")
+        # 全屏显示
+        # self.driver.add_argument('ignore-certificate-errors')
+        cls.driver.maximize_window()
+        cls.driver.find_element(By.ID, "details-button").click()
+        time.sleep(2)
+        cls.driver.find_element(By.ID, "proceed-link").click()
+        time.sleep(1)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
+
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
+
+    def test01_Login(self):
+        time.sleep(3)
+        self.driver.find_element(By.CSS_SELECTOR, ".btn.ng-star-inserted").click()
+        self.driver.find_element(By.NAME, "username").send_keys("6296001855")
+        self.driver.find_element(By.NAME, "password").send_keys(password)
+        self.driver.find_element(By.NAME, "dypwd").send_keys("666666")
+        self.driver.find_element(By.ID, "userInfo").click()
+
+    def test02_Createcase(self):
+        self.driver.find_element(By.LINK_TEXT, "后台管理").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".nav-link:nth-child(2) > .nav-text").click()
+        time.sleep(1)
+        collect = self.driver.find_element(By.XPATH,
+                                           "/html/body/my-app/div/div/div/app-use-case-main/div/div/app-cases/div[1]/div[1]/div[2]/div[1]/a")
+        ActionChains(self.driver).move_to_element(collect).perform()
+        time.sleep(5)
+        self.driver.find_element(By.CSS_SELECTOR, ".ant-dropdown-menu-item").click()
+        self.driver.find_element(By.ID, "app-case-info-input-scene-name").clear()
+        self.driver.find_element(By.ID, "app-case-info-input-scene-name").send_keys(CaseName())
+        n = 0
+        for i in range(0, 5):
+            time.sleep(1)
+            self.driver.find_element(By.ID, "app-case-tree-management-icon-add_test_case").click()
+            self.driver.find_element(By.ID, "app-case-info-input-scene-name").click()
+            self.driver.find_element(By.ID, "app-case-info-input-scene-name").clear()
+            self.driver.find_element(By.ID, "app-case-info-input-scene-name").send_keys(ScriptName(i))
+            self.driver.find_element(By.ID, "app-case-form-button-case-script").click()
+            self.driver.find_element(By.ID, "app-case-form-textarea-case-script-value").click()
+            self.driver.find_element(By.ID, "app-case-form-textarea-case-script-value").send_keys(GetScript(i + 1))
+            self.driver.find_element(By.ID, "link1").click()
+        self.driver.find_element(By.ID, "app-case-form-button-ok").click()
+        time.sleep(5)
+
+    def test03_CreateScence(self):
+        self.driver.find_element(By.LINK_TEXT, "后台管理").click()
+
+        self.driver.find_element(By.CSS_SELECTOR, ".nav-link:nth-child(1) > .nav-text").click()
+        self.driver.find_element(By.CSS_SELECTOR, "#app-scenes-icon-createscene > svg").click()
+        self.driver.find_element(By.NAME, "scene").click()
+        self.driver.find_element(By.NAME, "scene").send_keys(CaseName())
+        # ant-select-selection-search.ng-star-inserted
+        self.driver.find_element(By.CSS_SELECTOR, ".ant-select-selection-search.ng-star-inserted").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-option-item[title*='验收测试']").click()
+        # self.driver.find_element(By.CSS_SELECTOR, ".ant-select-item.ant-select-item-option.ng-star-inserted").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(3) input").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-option-item[title*='5GC']").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(4) nz-select-item").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-option-item[title*='拨测']").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(5) nz-select-item").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-option-item[title*='普通用例']").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(6) nz-select-item").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-option-item[title*='终端']").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(7) input").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-option-item[title*='中国移动']").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(8) nz-select-item").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-option-item[title*='普通运营商网络']").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(12) input").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(12) input").send_keys(CaseName())
+        time.sleep(5)
+        self.driver.find_element(By.CSS_SELECTOR, "nz-option-item > div").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".ant-tree-checkbox-inner").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".ant-btn:nth-child(2)").click()
+        time.sleep(5)
+
+    def test04_OnlineScence(self):
+        self.driver.find_element(By.ID, "app-scenes-input-search").click()
+        self.driver.find_element(By.ID, "app-scenes-input-search").send_keys(CaseName())
+        time.sleep(1)
+        self.driver.find_element(By.CSS_SELECTOR, ".clr-control-label.clr-col-null").click()
+        self.driver.find_element(By.CSS_SELECTOR, "i[title*='上线场景']").click()
+        time.sleep(1)
+        self.driver.find_element(By.CSS_SELECTOR, "button#OkMsg").click()
+        self.driver.find_element(By.CSS_SELECTOR, "button#OkMsg").click()
+        time.sleep(5)
+
+    def test05_FollowScence(self):
+        self.driver.implicitly_wait(30)
+        self.driver.find_element(By.CSS_SELECTOR, "img[alt*='iTest首页']").click()
+        self.driver.find_element(By.CSS_SELECTOR, "input[placeholder*='搜索关键字']").click()
+        self.driver.find_element(By.CSS_SELECTOR, "input[placeholder*='搜索关键字']").send_keys(CaseName())
+        time.sleep(2)
+        self.driver.find_element(By.CSS_SELECTOR, "button[nztype*='primary']").click()
+        self.driver.find_element(By.CSS_SELECTOR, "clr-icon[title*='立即关注']").click()
+        time.sleep(5)
+
+    def test06_Createtask(self):
+        self.driver.implicitly_wait(30)
+        self.driver.find_element(By.CSS_SELECTOR, "a[routerlink*='/task']").click()
+        self.driver.find_element(By.CSS_SELECTOR, "button[title*='创建任务").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(1) input").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(1) input").send_keys(CaseName())
+        self.driver.find_element(By.CSS_SELECTOR, "nz-option-item > div").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(2) input").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(2) input").clear()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(2) input").send_keys(CaseName())
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(3) input").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-form-item:nth-child(3) input").send_keys(admin)
+        self.driver.find_element(By.CSS_SELECTOR, "nz-option-item > div").click()
+        self.driver.find_element(By.CSS_SELECTOR, "nz-tree-node-checkbox > span").click()
+        self.driver.find_element(By.CSS_SELECTOR, "div > button:nth-child(3)>span").click()
+        time.sleep(5)
+
+    def test07_Deltask(self):
+        self.driver.refresh()
+        time.sleep(1)
+        self.driver.find_element(By.ID, "scene_search_input").click()
+        self.driver.find_element(By.ID, "scene_search_input").send_keys(CaseName())
+        time.sleep(2)
+        self.driver.find_element(By.CSS_SELECTOR, "tbody input").click()
+        self.driver.find_element(By.CSS_SELECTOR, "button[title*='删除任务").click()
+        time.sleep(1)
+        self.driver.find_element(By.CSS_SELECTOR, "button#OkMsg").click()
+        time.sleep(1)
+        self.driver.find_element(By.CSS_SELECTOR, "button#OkMsg").click()
+        time.sleep(5)
+
+    def test08_DelScence(self):
+        self.driver.find_element(By.CSS_SELECTOR, "a[routerlink*='/usecase']").click()
+        self.driver.find_element(By.ID, "app-scenes-input-search").click()
+        self.driver.find_element(By.ID, "app-scenes-input-search").send_keys(CaseName())
+        time.sleep(1)
+        self.driver.find_element(By.CSS_SELECTOR, ".clr-control-label.clr-col-null").click()
+        self.driver.find_element(By.CSS_SELECTOR, "i[title*='下线场景']").click()
+        time.sleep(1)
+        self.driver.find_element(By.CSS_SELECTOR, "button#OkMsg").click()
+        self.driver.find_element(By.CSS_SELECTOR, "button#OkMsg").click()
+        self.driver.find_element(By.CSS_SELECTOR, "i[title*='删除所选场景']").click()
+        time.sleep(1)
+        self.driver.find_element(By.CSS_SELECTOR, "button#OkMsg").click()
+        time.sleep(0.7)
+        self.driver.find_element(By.CSS_SELECTOR, "button#OkMsg").click()
+        time.sleep(5)
+
+    def test09_DelCase(self):
+        self.driver.find_element(By.CSS_SELECTOR, ".nav-link:nth-child(2) > .nav-text").click()
+        self.driver.find_element(By.ID, "app-case-search-input").click()
+        self.driver.find_element(By.ID, "app-case-search-input").send_keys(CaseName())
+        time.sleep(2)
+        self.driver.find_element(By.CSS_SELECTOR, "span.ant-checkbox > input").click()
+        self.driver.find_element(By.CSS_SELECTOR, "i[title*='删除所选用例集']").click()
+        time.sleep(1)
+        self.driver.find_element(By.CSS_SELECTOR, "button#OkMsg").click()
+        time.sleep(0.7)
+        self.driver.find_element(By.CSS_SELECTOR, "button#OkMsg").click()
+        time.sleep(5)
+
+    def test10_Logout(self):
+        self.driver.find_element(By.CSS_SELECTOR, "clr-dropdown > div").click()
+        self.driver.find_element(By.CSS_SELECTOR, "clr-dropdown-menu > a").click()
+        self.driver.find_element(By.CSS_SELECTOR, "button#OkMsg").click()
+        time.sleep(5)
+
+
+if __name__ == '__main__':
+    admin = "刘淼6296001855"
+    password = Password()
+    # unittest.main()
+    filename = '/home/6296001855@zte.intra/python/iTestWebTest/iTestWebTest02/iTestScript/testresult.html'  # 测试报告的存放路径及文件名
+    fp = open(filename, 'w')  # 创建测试报告html文件，此时还是个空文件
+    suite = unittest.TestSuite()  # 调用unittest的TestSuite(),理解为管理case的一个容器（测试套件）
+    suite.addTest(iTestTest('test01_Login'))  # 向测试套件中添加用例，"iTestTest"是上面定义的类名，"test01"是用例名
+    # suite.addTests(iTestTest())
+    runner = HTMLTestReport(stream=report,
+                            verbosity=2,
+                            images=True,
+                            title='HwTestReport 测试',
+                            description='带截图，带饼图，带详情',
+                            tester='Johnny')
+    # runner = HtmlTestRunner.HTMLTestRunner(stream=fp,report_title="iTestweb测试报告",descriptions="内容如下")
+    #  stream = fp  引用文件流
+    #  title  测试报告标题
+    #  description  报告说明与描述
+    print(type(suite))
+    print(type(fp))
+    print(type(runner))
+    runner.run(suite)  # 执行测试
+    fp.close()  # 关闭文件流，将HTML内容写进测试报告文件
